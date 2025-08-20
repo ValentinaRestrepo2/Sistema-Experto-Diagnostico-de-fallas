@@ -1,5 +1,4 @@
 import clips
-import tkinter as tk
 
 #Sistema experto para el diagnostico de fallas en el PC
 
@@ -41,7 +40,7 @@ class SistemaExpertoFallosPC:
         self.env.assert_string(hecho)
         
     def ejecutar(self):
-        self.env._run()
+        self.env.run()
     
     def mostrar_hechos(self):
         return[str(hecho) for hecho in self.env.facts()]
