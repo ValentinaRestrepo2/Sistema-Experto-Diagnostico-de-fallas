@@ -33,10 +33,24 @@ class SistemaExpertoFallosPC:
         ]
         for regla in reglas:
             self.env.build(regla)
+            
     def resetear (self):
         self.env.reset()
         
-    
+    def crear_hecho(self,hecho:str):
+        self.env.assert_string(hecho)
         
-
+    def ejecutar(self):
+        self.env._run()
+    
+    def mostrar_hechos(self):
+        return[str(hecho) for hecho in self.env.facts()]
+    
+    def mostrar_agenda(self):
+        return[str(agenda) for agenda in self.env.activations()]
+    
+    def diagnostico(self):
+        return[str(f) for f in self.env.facts() if "diagnostico" in str(f)]
+        
+    
         
