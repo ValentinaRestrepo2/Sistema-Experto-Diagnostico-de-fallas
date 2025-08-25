@@ -1,5 +1,6 @@
 import tkinter as tk
 from Sistema_Experto import SistemaExperto
+from Sistema_difuso import SistemaDifuso
 
 
 class SistemaInterfaz:
@@ -76,9 +77,7 @@ class SistemaInterfaz:
 
     def abrirSistemaDifuso(self):
         top = tk.Toplevel(self.root)
-        top.title("Sistema difuso")
-        tk.Label(top, text="Aquí irá la interfaz de lógica difusa.",
-                 font=("Arial", 14)).pack(pady=40)
+        SistemaDifuso(top)
 
 
 if __name__ == "__main__":
