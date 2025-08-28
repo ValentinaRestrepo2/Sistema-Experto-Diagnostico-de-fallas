@@ -13,8 +13,8 @@ class SistemaInterfaz:
     def __init__(self, root):
         self.root = root
         self.root.title("Sistema Experto y Difuso - Clase IA")
-        self.root.geometry("1000x700")
-        self.frame_main = tk.Frame(self.root, bg="#f2f2f2")
+        self.root.geometry("1000x600")
+        self.frame_main = tk.Frame(self.root, bg="#F3F3F3")
         self.frame_main.pack(fill="both", expand=True)
         self.se = SistemaExperto()
         self.sd = SistemaDifuso()
@@ -25,25 +25,28 @@ class SistemaInterfaz:
     # ---------------- SISTEMA EXPERTO ----------------
     def mostrarExperto(self):
         self._limpiar_frame()
-
+        #Encabezado
         encabezado = tk.Frame(self.frame_main, bg="#f2f2f2")
-        encabezado.pack(fill="x", pady=6)
-        tk.Label(encabezado, text="Sistema Experto - Diagnóstico Internet", font=("Arial", 20, "bold"), bg="#f2f2f2").pack(side="left", padx=10)
-        tk.Button(encabezado, text="Ir a Sistema Difuso ➡️", bg="#101E63", fg="white",
-                  font=("Arial", 12),
-                  command=self.mostrarDifuso).pack(side="right", padx=12)
+        encabezado.pack(side="top",fill="x", pady=5)
+        tk.Label(encabezado, text="SISTEMA EXPERTO", font=("Luckiest Guy", 35), fg="#1155CC", bg="#f2f2f2").pack(side="left", padx=20)
+        tk.Button(encabezado, text="Ir al sistema difuso", bg="#1366F2", fg="white",font=("Poppins", 12,"bold"),relief="raised",
+          padx=12,pady=3,anchor="center", justify="center",command=self.mostrarDifuso).pack(side="right", padx=20)
+        diagnostico_frame = tk.Frame(self.frame_main, bg="#f2f2f2")
+        diagnostico_frame.pack(fill="x", padx=20)
+        tk.Label(diagnostico_frame, text="🛜Diagnóstico del internet", font=("Poppins", 25, "bold"), bg="#f2f2f2").pack(side="left",padx=10)
+        #Principal
+        main_content_frame = tk.Frame(self.frame_main, bg="#f2f2f2")
+        main_content_frame.pack(fill="both", padx=10, pady=5)
 
-        # Frame principal para checkboxes y resultados
-        main_frame = tk.Frame(self.frame_main, bg="#f2f2f2")
-        main_frame.pack(fill="both", expand=True, padx=18, pady=10)
+        frame_izq = tk.Frame(main_content_frame, bg="#f2f2f2", padx=20, pady=5)
+        frame_izq.pack(side="left", fill="both")
 
-        # Frame izquierdo para checkboxes
-        frame_izq = tk.Frame(main_frame, bg="#f2f2f2")
-        frame_izq.pack(side="left", fill="both", expand=True, padx=10)
+        tk.Label(frame_izq, text="Ingrese su nombre", font=("Poppins", 10,"bold"), bg="#f2f2f2").pack(anchor="w", pady=(0, 2))
+        self.nombre_entry = tk.Entry(frame_izq, font=("Poppins", 10), relief="raised")
+        self.nombre_entry.pack(anchor="w", fill="x", pady=(0, 20))
 
-        tk.Label(frame_izq, text="Seleccione los hechos:", font=("Arial", 12, "bold"), bg="#f2f2f2").pack(anchor="w", pady=(0, 10))
+        tk.Label(frame_izq, text="Seleccione los hechos que aplican:", font=("Poppins", 12, "bold"), bg="#f2f2f2").pack(anchor="w", pady=(0, 5))
 
-        # Variables de selección múltiple
         self.hechos_vars = {
             "noInternet": tk.BooleanVar(value=False),
             "energiaDesconectada": tk.BooleanVar(value=False),
@@ -54,35 +57,40 @@ class SistemaInterfaz:
             "lucesRojas": tk.BooleanVar(value=False),
         }
 
-        ttk.Checkbutton(frame_izq, text="No hay internet", variable=self.hechos_vars["noInternet"]).pack(anchor="w", pady=2)
-        ttk.Checkbutton(frame_izq, text="Cable de energía del modem desconectado", variable=self.hechos_vars["energiaDesconectada"]).pack(anchor="w", pady=2)
-        ttk.Checkbutton(frame_izq, text="El router está apagado", variable=self.hechos_vars["routerApagado"]).pack(anchor="w", pady=2)
-        ttk.Checkbutton(frame_izq, text="Las luces del router están rojas", variable=self.hechos_vars["lucesRojas"]).pack(anchor="w", pady=2)
-        ttk.Checkbutton(frame_izq, text="Cable Ethernet desconectado", variable=self.hechos_vars["ethernetDesconectado"]).pack(anchor="w", pady=2)
-        ttk.Checkbutton(frame_izq, text="El WiFi está caído", variable=self.hechos_vars["wifiCaido"]).pack(anchor="w", pady=2)
-        ttk.Checkbutton(frame_izq, text="Error de DNS", variable=self.hechos_vars["dnsError"]).pack(anchor="w", pady=2)
-
-        # Botones
+        # Checkboxes
+        tk.Checkbutton(frame_izq, text="No hay internet", variable=self.hechos_vars["noInternet"],font=("Poppins", 9), bg="#f2f2f2").pack(anchor="w")
+        tk.Checkbutton(frame_izq, text="Cable de energía del modem desconectado", variable=self.hechos_vars["energiaDesconectada"],font=("Poppins", 9), bg="#f2f2f2").pack(anchor="w")
+        tk.Checkbutton(frame_izq, text="El router está apagado", variable=self.hechos_vars["routerApagado"],font=("Poppins", 9), bg="#f2f2f2").pack(anchor="w")
+        tk.Checkbutton(frame_izq, text="Las luces del router están rojas", variable=self.hechos_vars["lucesRojas"],font=("Poppins", 9), bg="#f2f2f2").pack(anchor="w")
+        tk.Checkbutton(frame_izq, text="Cable Ethernet desconectado", variable=self.hechos_vars["ethernetDesconectado"],font=("Poppins", 9), bg="#f2f2f2").pack(anchor="w")
+        tk.Checkbutton(frame_izq, text="El WiFi está caído", variable=self.hechos_vars["wifiCaido"],font=("Poppins", 9), bg="#f2f2f2").pack(anchor="w")
+        tk.Checkbutton(frame_izq, text="Error de DNS", variable=self.hechos_vars["dnsError"],font=("Poppins", 9), bg="#f2f2f2").pack(anchor="w")
+     
         btns = tk.Frame(frame_izq, bg="#f2f2f2")
-        btns.pack(pady=10)
-        tk.Button(btns, text="Diagnosticar", bg="#4361F0", fg="white", font=("Arial", 12), 
-                  command=self._diagnosticar_internet).pack(side="left", padx=5)
-        tk.Button(btns, text="Limpiar", bg="#d9534f", fg="white", font=("Arial", 12), 
-                  command=self._limpiar_internet).pack(side="left", padx=5)
+        btns.pack(pady=20)
+        tk.Button(btns, text="Diagnosticar", bg="#03BA4B", fg="white", font=("Poppins", 12,"bold"),relief="groove",
+          padx=20,pady=3,anchor="center", justify="center", command=self._diagnosticar_internet).pack(side="left", padx=10)
+        tk.Button(btns, text="Limpiar", bg="#FF3548", fg="white", font=("Poppins", 12,"bold"),relief="groove",
+          padx=20,pady=3,anchor="center", justify="center",command=self._limpiar_internet).pack(side="left", padx=10)
 
-        # Frame derecho para resultados
-        frame_der = tk.Frame(main_frame, bg="#f2f2f2")
-        frame_der.pack(side="right", fill="both", expand=True, padx=10)
-
-        tk.Label(frame_der, text="Resultados del diagnóstico:", font=("Arial", 12, "bold"), bg="#f2f2f2").pack(anchor="w", pady=(0, 5))
-        self.salida_internet = tk.Text(frame_der, width=60, height=25, font=("Consolas", 10), bg="white")
-        self.salida_internet.pack(fill="both", expand=True)
+        frame_der = tk.Frame(main_content_frame, bg="#f2f2f2")
+        frame_der.pack(side="right", fill="none", expand=True)
+        
+        resultados_frame = tk.Frame(frame_der, bg="white", highlightbackground="gray", highlightthickness=1)
+        resultados_frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
+        tk.Label(resultados_frame, text="Resultados:", font=("Poppins", 12, "bold"), bg="white").pack(anchor="w", padx=10, pady=(5, 5))
+        self.salida_internet = tk.Text(resultados_frame, font=("Poppins", 10), bg="white", relief="flat", height=10)
+        self.salida_internet.pack(fill="both", expand=True, padx=10, pady=5)
+        
+        recomendaciones_frame = tk.Frame(frame_der, bg="white", highlightbackground="gray", highlightthickness=1)
+        recomendaciones_frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
+        tk.Label(recomendaciones_frame, text="✨ Recomendaciones:", font=("Poppins", 12, "bold"), bg="white").pack(anchor="w", padx=10, pady=(5, 5))
+        self.salida_recomendaciones = tk.Text(recomendaciones_frame, font=("Poppins", 10), bg="white", relief="flat", height=10)
+        self.salida_recomendaciones.pack(fill="both", expand=True, padx=10, pady=5)
 
     def _diagnosticar_internet(self):
-        """Ejecuta el diagnóstico de internet"""
         self.salida_internet.delete("1.0", tk.END)
-        
-        # Obtener hechos seleccionados
+        nombre_usuario = self.nombre_entry.get()
         hechos_seleccionados = []
         for nombre_hecho, var in self.hechos_vars.items():
             if var.get():
@@ -92,17 +100,14 @@ class SistemaInterfaz:
             self.salida_internet.insert(tk.END, "Por favor seleccione al menos un hecho para diagnosticar.\n")
             return
         
-        # Ejecutar diagnóstico
         resultado = self.se.diagnosticar_internet(hechos_seleccionados)
         
-        # Mostrar hechos
         self.salida_internet.insert(tk.END, "Hechos:\n")
         for hecho in resultado['hechos']:
             self.salida_internet.insert(tk.END, f"- {hecho}\n")
         
         self.salida_internet.insert(tk.END, "\n")
         
-        # Mostrar reglas activadas
         self.salida_internet.insert(tk.END, "Reglas activadas:\n")
         if resultado['reglas_activadas']:
             for regla in resultado['reglas_activadas']:
@@ -111,20 +116,20 @@ class SistemaInterfaz:
             self.salida_internet.insert(tk.END, "- No se activaron reglas\n")
         
         self.salida_internet.insert(tk.END, "\n")
-        
-        # Mostrar recomendaciones
+        self.salida_recomendaciones.insert(tk.END, f"{nombre_usuario} debes: \n")
         if resultado['recomendaciones']:
-            self.salida_internet.insert(tk.END, "Recomendaciones:\n")
+            #self.salida_recomendaciones.insert(tk.END, "Recomendaciones:\n")
             for recomendacion in resultado['recomendaciones']:
-                self.salida_internet.insert(tk.END, f"- {recomendacion}\n")
+                self.salida_recomendaciones.insert(tk.END, f"- {recomendacion}\n")
         else:
-            self.salida_internet.insert(tk.END, "No se generaron recomendaciones.\n")
+            self.salida_recomendaciones.insert(tk.END, "No se generaron recomendaciones.\n")
 
     def _limpiar_internet(self):
-        """Limpia la interfaz del sistema experto de internet"""
         for var in self.hechos_vars.values():
             var.set(False)
         self.salida_internet.delete("1.0", tk.END)
+        self.salida_recomendaciones.delete("1.0", tk.END)
+        self.nombre_entry.delete(0, tk.END)
 
     # ---------------- SISTEMA DIFUSO ----------------
     def mostrarDifuso(self):
@@ -181,9 +186,6 @@ class SistemaInterfaz:
                 self.text_area.insert(tk.END, f"  {var.capitalize()}: " +
                                   ", ".join([f"{s}={v:.2f}" for s,v in subconjs.items()]) + "\n")
 
-           # self.text_area.insert(tk.END, "Reglas activadas:\n")
-            #for regla, valor in detalle["reglas"].items():
-             #   self.text_area.insert(tk.END, f"  {regla}: {valor:.2f}\n")
             self.text_area.insert(tk.END, "-----------------------------\n")
           
             self.text_area.insert(tk.END, f"Diagnóstico final → {detalle['texto']} Valor difuso → ({detalle['valor']:.2f})\n")

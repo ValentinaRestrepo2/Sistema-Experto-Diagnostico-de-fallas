@@ -78,7 +78,7 @@ class SistemaExperto:
             if "contactarProveedor" in f:
                 recomendaciones.append("Contactar al proveedor de internet")
             if "encenderRouter" in f:
-                recomendaciones.append("Revisa el cable de alimentación de energía")
+                recomendaciones.append("Revisar el cable de alimentación de energía")
             if "revisarRouter" in f:
                 recomendaciones.append("Reiniciar el router")
             if "revisarCableEnergia" in f:
