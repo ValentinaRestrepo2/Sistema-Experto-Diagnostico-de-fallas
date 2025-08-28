@@ -8,11 +8,20 @@ class SistemaExperto:
     def reestablecer(self):
         self.env.clear()
 
-        self.env.build('(defrule desfribilacion_urgente (riesgo ?nombre infarto) (anterior ?nombre infarto) => (assert (aplicar ?nombre desfribilacion_urgente)) (printout t "dar a " ?nombre " desfribilacion urgente." crlf))')
-        self.env.build('(defrule riesgo_infarto (dolor ?nombre lado_izquierdo) (alta ?nombre presion_alterial) => (assert (riesgo ?nombre infarto)) (printout t ?nombre " corre riesgo infarto" crlf))')
-        self.env.build('(defrule presion_alterial_alta (alta ?nombre presion_ocular) => (assert (alta ?nombre presion_alterial)) (printout t ?nombre " tiene la presión alterial alta" crlf))')
-        self.env.build('(defrule esclerotico (paciente ?nombre sobrepeso fumador) => (assert (propenso ?nombre esclerosis)) (printout t ?nombre " es propenso a la esclerosis" crlf))')
-        self.env.build('(defrule desfribilacion_general (propenso ?nombre esclerosis) (alta ?nombre presion_ocular) => (assert (aplicar ?nombre desfribilacion_general)) (printout t "dar a " ?nombre " desfribilacion general." crlf))')
+        self.build('(defrule reglaEnergia (energiaDesconectada) => (assert(revisarCableEnergia)))')
+        # 2) Encendido del router
+        self.build('(defrule reglaRouterApagado (routerApagado) (or (energiaDesconectada) (not (noInternet))) => (assert(encenderRouter)))')
+        # 3) Señales del router
+        self.build('(defrule reglaLucesRojas (lucesRojas) (not (routerApagado)) => (assert(revisarRouter)))')
+        # 4) Conexión física y WiFi
+        self.build('(defrule reglaEthernet (ethernetDesconectado) (noInternet) (not (energiaDesconectada)) (not (routerApagado)) => (assert(conectarCableEthernet)))')
+        self.build('(defrule reglaWifi (wifiCaido) (noInternet) (not (energiaDesconectada)) (not (routerApagado)) => (assert(reiniciarModem)))')
+        # 5) Resolución de nombres
+        self.build('(defrule reglaDNS (dnsError) (noInternet) (not (energiaDesconectada)) (not (routerApagado)) => (assert(cambiarDNS)))')
+        # 6) Escalación
+        self.build('(defrule reglaGrave (wifiCaido) (dnsError) (noInternet) (not (energiaDesconectada)) (not (routerApagado)) => (assert(contactarProveedor)))')
+        self.build('(defrule reglaRouterDanado (noInternet) (routerApagado) (not (energiaDesconectada)) => (assert(contactarProveedor)))')
+        self.build('(defrule reglaProveedor (noInternet) (not (energiaDesconectada)) (not (routerApagado)) (not (lucesRojas)) (not (wifiCaido)) (not (dnsError)) (not (ethernetDesconectado)) => (assert(contactarProveedor)))')
 
     def agregarHecho(self, hecho: str):
         self.env.assert_string(f"({hecho})")
@@ -23,3 +32,62 @@ class SistemaExperto:
 
     def verAgenda(self):
             return [f"{act.name}: f-{i}" for i,act in enumerate(self.env.activations())]
+
+    def build(self, rule):
+        self.env.build(rule)
+
+    def reset(self):
+        self.env.reset()
+
+    def run(self):
+        self.env.run()
+
+    def diagnosticar_internet(self, hechos_seleccionados):
+        """Método para diagnosticar problemas de internet"""
+        self.reset()
+        
+        # Agregar hechos seleccionados
+        for hecho in hechos_seleccionados:
+            self.env.assert_string(f"({hecho})")
+        
+        # Obtener hechos antes de ejecutar
+        hechos_antes = [str(fact) for fact in self.env.facts()]
+        
+        # Obtener reglas activadas antes de ejecutar
+        reglas_activadas = []
+        for act in self.env.activations():
+            try:
+                regla_pp = str(act.rule.pp_form).strip()
+                if regla_pp.startswith("(") and regla_pp.endswith(")"):
+                    regla_pp = regla_pp[1:-1]
+                reglas_activadas.append(regla_pp)
+            except Exception:
+                reglas_activadas.append(f"- {act}")
+        
+        # Ejecutar el sistema
+        self.run()
+        
+        # Obtener recomendaciones
+        recomendaciones = []
+        for fact in self.env.facts():
+            f = str(fact)
+            if "reiniciarModem" in f:
+                recomendaciones.append("Reiniciar el router")
+            if "cambiarDNS" in f:
+                recomendaciones.append("Cambiar los DNS en la configuración")
+            if "contactarProveedor" in f:
+                recomendaciones.append("Contactar al proveedor de internet")
+            if "encenderRouter" in f:
+                recomendaciones.append("Revisa el cable de alimentación de energía")
+            if "revisarRouter" in f:
+                recomendaciones.append("Reiniciar el router")
+            if "revisarCableEnergia" in f:
+                recomendaciones.append("Revisar cable de energía y conectarlo correctamente")
+            if "conectarCableEthernet" in f:
+                recomendaciones.append("Conectar correctamente el cable Ethernet al módem y al equipo")
+        
+        return {
+            'hechos': hechos_antes,
+            'reglas_activadas': reglas_activadas,
+            'recomendaciones': recomendaciones
+        }

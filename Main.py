@@ -28,63 +28,108 @@ class SistemaInterfaz:
 
         encabezado = tk.Frame(self.frame_main, bg="#f2f2f2")
         encabezado.pack(fill="x", pady=6)
-        tk.Label(encabezado, text="Sistema Experto", font=("Arial", 20, "bold"), bg="#f2f2f2").pack(side="left", padx=10)
+        tk.Label(encabezado, text="Sistema Experto - Diagnóstico Internet", font=("Arial", 20, "bold"), bg="#f2f2f2").pack(side="left", padx=10)
         tk.Button(encabezado, text="Ir a Sistema Difuso ➡️", bg="#101E63", fg="white",
                   font=("Arial", 12),
                   command=self.mostrarDifuso).pack(side="right", padx=12)
 
-        input_hecho = tk.Frame(self.frame_main, bg="#f2f2f2")
-        input_hecho.pack(pady=8)
-        tk.Label(input_hecho, text="Ingrese un hecho:", font=("Arial", 12), bg="#f2f2f2").pack()
-        self.eHecho = tk.Entry(input_hecho, width=70, font=("Arial", 12))
-        self.eHecho.pack(pady=4)
-        self.eHecho.bind("<Return>", self._on_enter)
+        # Frame principal para checkboxes y resultados
+        main_frame = tk.Frame(self.frame_main, bg="#f2f2f2")
+        main_frame.pack(fill="both", expand=True, padx=18, pady=10)
 
-        panel = tk.Frame(self.frame_main, bg="#f2f2f2")
-        panel.pack(fill="both", expand=True, padx=18, pady=10)
+        # Frame izquierdo para checkboxes
+        frame_izq = tk.Frame(main_frame, bg="#f2f2f2")
+        frame_izq.pack(side="left", fill="both", expand=True, padx=10)
 
-        panelhecho = tk.Frame(panel, bg="#f2f2f2")
-        panelhecho.pack(side="left", fill="both", expand=True, padx=10)
-        tk.Label(panelhecho, text="Hechos", font=("Arial", 12, "bold"), bg="#f2f2f2").pack(anchor="w")
-        self.txt_hechos = tk.Text(panelhecho, height=22, width=52, font=("Consolas", 10), bg="white")
-        self.txt_hechos.pack(fill="both", expand=True, pady=5)
+        tk.Label(frame_izq, text="Seleccione los hechos:", font=("Arial", 12, "bold"), bg="#f2f2f2").pack(anchor="w", pady=(0, 10))
 
-        panelagenda = tk.Frame(panel, bg="#f2f2f2")
-        panelagenda.pack(side="right", fill="both", expand=True, padx=10)
-        tk.Label(panelagenda, text="Agenda", font=("Arial", 12, "bold"), bg="#f2f2f2").pack(anchor="w")
-        self.txt_agenda = tk.Text(panelagenda, height=22, width=52, font=("Consolas", 10), bg="white")
-        self.txt_agenda.pack(fill="both", expand=True, pady=5)
+        # Variables de selección múltiple
+        self.hechos_vars = {
+            "noInternet": tk.BooleanVar(value=False),
+            "energiaDesconectada": tk.BooleanVar(value=False),
+            "ethernetDesconectado": tk.BooleanVar(value=False),
+            "wifiCaido": tk.BooleanVar(value=False),
+            "dnsError": tk.BooleanVar(value=False),
+            "routerApagado": tk.BooleanVar(value=False),
+            "lucesRojas": tk.BooleanVar(value=False),
+        }
 
-        tk.Button(self.frame_main, text="🔄 Reestablecer sistema", bg="#d9534f", fg="white",
-                  font=("Arial", 12), command=self._resetear).pack(pady=8)
+        ttk.Checkbutton(frame_izq, text="No hay internet", variable=self.hechos_vars["noInternet"]).pack(anchor="w", pady=2)
+        ttk.Checkbutton(frame_izq, text="Cable de energía del modem desconectado", variable=self.hechos_vars["energiaDesconectada"]).pack(anchor="w", pady=2)
+        ttk.Checkbutton(frame_izq, text="El router está apagado", variable=self.hechos_vars["routerApagado"]).pack(anchor="w", pady=2)
+        ttk.Checkbutton(frame_izq, text="Las luces del router están rojas", variable=self.hechos_vars["lucesRojas"]).pack(anchor="w", pady=2)
+        ttk.Checkbutton(frame_izq, text="Cable Ethernet desconectado", variable=self.hechos_vars["ethernetDesconectado"]).pack(anchor="w", pady=2)
+        ttk.Checkbutton(frame_izq, text="El WiFi está caído", variable=self.hechos_vars["wifiCaido"]).pack(anchor="w", pady=2)
+        ttk.Checkbutton(frame_izq, text="Error de DNS", variable=self.hechos_vars["dnsError"]).pack(anchor="w", pady=2)
 
-        self._refrescar()
+        # Botones
+        btns = tk.Frame(frame_izq, bg="#f2f2f2")
+        btns.pack(pady=10)
+        tk.Button(btns, text="Diagnosticar", bg="#4361F0", fg="white", font=("Arial", 12), 
+                  command=self._diagnosticar_internet).pack(side="left", padx=5)
+        tk.Button(btns, text="Limpiar", bg="#d9534f", fg="white", font=("Arial", 12), 
+                  command=self._limpiar_internet).pack(side="left", padx=5)
 
-    def _on_enter(self, _event=None):
-        hecho = self.eHecho.get().strip()
-        if hecho:
-            self.se.agregarHecho(hecho)
-            self.eHecho.delete(0, tk.END)
-            self._refrescar()
+        # Frame derecho para resultados
+        frame_der = tk.Frame(main_frame, bg="#f2f2f2")
+        frame_der.pack(side="right", fill="both", expand=True, padx=10)
 
-    def _refrescar(self):
-        self.txt_hechos.delete("1.0", tk.END)
-        self.txt_hechos.insert(tk.END, "\n".join(self.se.verHechos()))
-        self.txt_agenda.delete("1.0", tk.END)
-        agenda = self.se.verAgenda()
-        if agenda:
-            self.txt_agenda.insert(tk.END, "\n".join(agenda))
+        tk.Label(frame_der, text="Resultados del diagnóstico:", font=("Arial", 12, "bold"), bg="#f2f2f2").pack(anchor="w", pady=(0, 5))
+        self.salida_internet = tk.Text(frame_der, width=60, height=25, font=("Consolas", 10), bg="white")
+        self.salida_internet.pack(fill="both", expand=True)
+
+    def _diagnosticar_internet(self):
+        """Ejecuta el diagnóstico de internet"""
+        self.salida_internet.delete("1.0", tk.END)
+        
+        # Obtener hechos seleccionados
+        hechos_seleccionados = []
+        for nombre_hecho, var in self.hechos_vars.items():
+            if var.get():
+                hechos_seleccionados.append(nombre_hecho)
+        
+        if not hechos_seleccionados:
+            self.salida_internet.insert(tk.END, "Por favor seleccione al menos un hecho para diagnosticar.\n")
+            return
+        
+        # Ejecutar diagnóstico
+        resultado = self.se.diagnosticar_internet(hechos_seleccionados)
+        
+        # Mostrar hechos
+        self.salida_internet.insert(tk.END, "Hechos:\n")
+        for hecho in resultado['hechos']:
+            self.salida_internet.insert(tk.END, f"- {hecho}\n")
+        
+        self.salida_internet.insert(tk.END, "\n")
+        
+        # Mostrar reglas activadas
+        self.salida_internet.insert(tk.END, "Reglas activadas:\n")
+        if resultado['reglas_activadas']:
+            for regla in resultado['reglas_activadas']:
+                self.salida_internet.insert(tk.END, f"- {regla}\n")
         else:
-            self.txt_agenda.insert(tk.END, "(Sin activaciones)")
+            self.salida_internet.insert(tk.END, "- No se activaron reglas\n")
+        
+        self.salida_internet.insert(tk.END, "\n")
+        
+        # Mostrar recomendaciones
+        if resultado['recomendaciones']:
+            self.salida_internet.insert(tk.END, "Recomendaciones:\n")
+            for recomendacion in resultado['recomendaciones']:
+                self.salida_internet.insert(tk.END, f"- {recomendacion}\n")
+        else:
+            self.salida_internet.insert(tk.END, "No se generaron recomendaciones.\n")
 
-    def _resetear(self):
-        self.se.reestablecer()
-        self._refrescar()
+    def _limpiar_internet(self):
+        """Limpia la interfaz del sistema experto de internet"""
+        for var in self.hechos_vars.values():
+            var.set(False)
+        self.salida_internet.delete("1.0", tk.END)
 
     # ---------------- SISTEMA DIFUSO ----------------
     def mostrarDifuso(self):
         self._limpiar_frame()
-
+        
         encabezado = tk.Frame(self.frame_main, bg="#f2f2f2")
         encabezado.pack(fill="x", pady=6)
         tk.Label(encabezado, text="Sistema Difuso", font=("Arial", 20, "bold"), bg="#f2f2f2").pack(side="left", padx=10)
@@ -183,7 +228,8 @@ class SistemaInterfaz:
                     fuzz.interp_membership(x, self.sd.diagnostico['normal'].mf, detalle["valor"]))
             rapido_mf = np.fmin(self.sd.diagnostico['rapido'].mf,
                     fuzz.interp_membership(x, self.sd.diagnostico['rapido'].mf, detalle["valor"]))
-            agregado = np.fmax(lento_mf, np.fmax(normal_mf, rapido_mf))
+            agregado = np.fmax(lento_mf, np
+            .fmax(normal_mf, rapido_mf))
 
             self.axs[1,1].fill_between(x, np.zeros_like(x), agregado,
                            facecolor="orange", alpha=0.4)
