@@ -137,34 +137,59 @@ class SistemaInterfaz:
         
         encabezado = tk.Frame(self.frame_main, bg="#f2f2f2")
         encabezado.pack(fill="x", pady=6)
-        tk.Label(encabezado, text="Sistema Difuso", font=("Arial", 20, "bold"), bg="#f2f2f2").pack(side="left", padx=10)
-        tk.Button(encabezado, text="Ir a Sistema Experto ➡️", bg="#101E63", fg="white",
-                  font=("Arial", 12), command=self.mostrarExperto).pack(side="right", padx=10)
+        tk.Label(encabezado, text="SISTEMA DIFUSO", font=("Luckiest Guy", 35), fg="#1155CC", bg="#f2f2f2").pack(side="left", padx=20)
+        tk.Button(encabezado, text="Ir al sistema experto", bg="#1366F2", fg="white",font=("Poppins", 12,"bold"),relief="raised",
+          padx=12,pady=3,anchor="center", justify="center",command=self.mostrarExperto).pack(side="right", padx=20)
+        diagnostico_frame = tk.Frame(self.frame_main, bg="#f2f2f2")
+        diagnostico_frame.pack(fill="x", padx=20)
+        tk.Label(diagnostico_frame, text="🛜Diagnóstico velocidad del internet", font=("Poppins", 25, "bold"), bg="#f2f2f2").pack(side="left",padx=10)
+       
+        input_frame = tk.Frame(self.frame_main, bg="#f2f2f2")
+        input_frame.pack(fill="x", pady=2)
+        
+        # Frame anidado para colocar las etiquetas y entradas en una sola fila usando grid
+        fields_frame = tk.Frame(input_frame, bg="#f2f2f2")
+        fields_frame.pack(expand=True)
+        
+        tk.Label(fields_frame, text="Ingrese su nombre", font=("Poppins", 10,"bold"), bg="#f2f2f2").grid(row=0, column=0, padx=10, pady=2)
+        self.nombre_entry = tk.Entry(fields_frame, font=("Poppins", 10), relief="raised")
+        self.nombre_entry.grid(row=1, column=0, padx=10, pady=5)
+        
+        tk.Label(fields_frame, text="Velocidad (Mbps):", font=("Poppins", 10,"bold"), bg="#f2f2f2").grid(row=0, column=1, padx=10, pady=2)
+        self.e_vel = tk.Entry(fields_frame, font=("Poppins", 10), relief="raised")
+        self.e_vel.grid(row=1, column=1, padx=10, pady=2)
+        
+        tk.Label(fields_frame, text="Latencia (ms):", font=("Poppins", 10,"bold"), bg="#f2f2f2").grid(row=0, column=2, padx=10, pady=2)
+        self.e_lat = tk.Entry(fields_frame, font=("Poppins", 10), relief="raised")
+        self.e_lat.grid(row=1, column=2, padx=10, pady=2)
+        
+        tk.Label(fields_frame, text="Pérdida (%) :", font=("Poppins", 10,"bold"), bg="#f2f2f2").grid(row=0, column=3, padx=10, pady=2)
+        self.e_per = tk.Entry(fields_frame, font=("Poppins", 10), relief="raised")
+        self.e_per.grid(row=1, column=3, padx=10, pady=2)
+        
+        tk.Button(fields_frame, text="Diagnosticar", bg="#03BA4B", fg="white", font=("Poppins", 12,"bold"),
+                  command=self._diagnosticar_difuso).grid(row=1, column=4, padx=8,pady=5, sticky="ew")
+        tk.Button(fields_frame, text="Limpiar", bg="#FF3548", fg="white", font=("Poppins", 12,"bold"),
+                  command=self._limpiar_difuso).grid(row=1, column=5, padx=8,pady=5, sticky="ew")
 
+        
         frame_izq = tk.Frame(self.frame_main)
-        frame_izq.pack(side="left", padx=20, pady=20)
-
-        tk.Label(frame_izq, text="Velocidad (Mbps):").grid(row=0, column=0, sticky="w")
-        self.e_vel = ttk.Entry(frame_izq)
-        self.e_vel.grid(row=0, column=1)
-
-        tk.Label(frame_izq, text="Latencia (ms):").grid(row=1, column=0, sticky="w")
-        self.e_lat = ttk.Entry(frame_izq)
-        self.e_lat.grid(row=1, column=1)
-
-        tk.Label(frame_izq, text="Pérdida (%) :").grid(row=2, column=0, sticky="w")
-        self.e_per = ttk.Entry(frame_izq)
-        self.e_per.grid(row=2, column=1)
-
-        tk.Button(frame_izq, text="Diagnosticar", bg="#4361F0", fg="white",font=("Arial", 12),command=self._diagnosticar_difuso).grid(row=3, column=0, pady=10)
-        tk.Button(frame_izq, text="🔄 Limpiar",bg="#d9534f", fg="white",font=("Arial", 12), command=self._limpiar_difuso).grid(row=3, column=1, pady=10)
-
+        frame_izq.pack(side="left", fill="y",padx=10, pady=5)
+       
+        resultados_frame = tk.Frame(frame_izq, bg="white", highlightbackground="gray", highlightthickness=1)
+        resultados_frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
+        tk.Label(resultados_frame, text="Calculo:", font=("Poppins", 12, "bold"), bg="white").pack(anchor="w", padx=10, pady=(5, 5))
+        self.text_area = tk.Text(resultados_frame, font=("Poppins", 10), bg="white", relief="flat", height=5, width=30)
+        self.text_area.pack(fill="both", expand=True, padx=10, pady=5)
+        
+        finaldiagnostico_frame = tk.Frame(frame_izq, bg="white", highlightbackground="gray", highlightthickness=1)
+        finaldiagnostico_frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
+        tk.Label(finaldiagnostico_frame, text="✨ Diagnostico:", font=("Poppins", 12, "bold"), bg="white").pack(anchor="w", padx=10, pady=(5, 5))
+        self.salida_diagnostico = tk.Text(finaldiagnostico_frame, font=("Poppins", 14 , "bold"), fg="#1366F2",bg="white", relief="flat", height=8,width=30)
+        self.salida_diagnostico.pack(fill="both", expand=True, padx=10, pady=5)
+        
         frame_der = tk.Frame(self.frame_main)
-        frame_der.pack(side="right", padx=20, pady=20, fill="both", expand=True)
-
-        tk.Label(frame_der, text="Calculo:").pack(anchor="w")
-        self.text_area = tk.Text(frame_der, width=60, height=15)
-        self.text_area.pack(fill="both", expand=True)
+        frame_der.pack(side="right", padx=10, pady=10, fill="both", expand=True)
 
         self.fig, self.axs = plt.subplots(2, 2, figsize=(8, 6), constrained_layout=True)
         self.canvas = FigureCanvasTkAgg(self.fig, master=frame_der)
@@ -175,21 +200,17 @@ class SistemaInterfaz:
             vel = float(self.e_vel.get())
             lat = float(self.e_lat.get())
             per = float(self.e_per.get())
+            nombre = self.nombre_entry.get()
 
             detalle = self.sd.diagnosticar(vel, lat, per)
 
-            self.text_area.insert(tk.END, "--- DIAGNÓSTICO ---\n")
-            self.text_area.insert(tk.END, f"Entradas → Vel={vel} Mbps, Lat={lat} ms, Perd={per} %\n")
-            self.text_area.insert(tk.END, "-----------------------------\n")
-            self.text_area.insert(tk.END, "Membership:\n")
+            self.text_area.insert(tk.END, f"-- Entradas → Vel={vel} Mbps,  Lat={lat} ms,  Perd={per} %\n")
+            self.text_area.insert(tk.END, "Membership:\n", "bold")
             for var, subconjs in detalle["grados"].items():
-                self.text_area.insert(tk.END, f"  {var.capitalize()}: " +
+                self.text_area.insert(tk.END, f"--  {var.capitalize()}: " +
                                   ", ".join([f"{s}={v:.2f}" for s,v in subconjs.items()]) + "\n")
 
-            self.text_area.insert(tk.END, "-----------------------------\n")
-          
-            self.text_area.insert(tk.END, f"Diagnóstico final → {detalle['texto']} Valor difuso → ({detalle['valor']:.2f})\n")
-            self.text_area.insert(tk.END, "-----------------------------\n")
+            self.salida_diagnostico.insert(tk.END, f"{nombre} tienes {detalle['texto']} \ncon valor difuso → ({detalle['valor']:.2f})\n")
 
             for ax in self.axs.ravel():
                 ax.cla()
@@ -234,7 +255,7 @@ class SistemaInterfaz:
             .fmax(normal_mf, rapido_mf))
 
             self.axs[1,1].fill_between(x, np.zeros_like(x), agregado,
-                           facecolor="orange", alpha=0.4)
+                           facecolor="#B6D7A8", alpha=0.4)
             self.axs[1,1].legend()
             self.canvas.draw_idle()
 
@@ -245,7 +266,9 @@ class SistemaInterfaz:
         self.e_vel.delete(0, tk.END)
         self.e_lat.delete(0, tk.END)
         self.e_per.delete(0, tk.END)
+        self.nombre_entry.delete(0, tk.END)
         self.text_area.delete("1.0", tk.END)
+        self.salida_diagnostico.delete("1.0", tk.END)
         for ax in self.fig.axes:
             ax.cla()
         self.canvas.draw()
