@@ -85,7 +85,7 @@ class SistemaInterfaz:
         recomendaciones_frame = tk.Frame(frame_der, bg="white", highlightbackground="gray", highlightthickness=1)
         recomendaciones_frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
         tk.Label(recomendaciones_frame, text="✨ Recomendaciones:", font=("Poppins", 12, "bold"), bg="white").pack(anchor="w", padx=10, pady=(5, 5))
-        self.salida_recomendaciones = tk.Text(recomendaciones_frame, font=("Poppins", 10), bg="white", relief="flat", height=10)
+        self.salida_recomendaciones = tk.Text(recomendaciones_frame, font=("Poppins", 12,"bold"),fg="#1366F2", bg="white", relief="flat", height=10)
         self.salida_recomendaciones.pack(fill="both", expand=True, padx=10, pady=5)
 
     def _diagnosticar_internet(self):
@@ -178,7 +178,7 @@ class SistemaInterfaz:
        
         resultados_frame = tk.Frame(frame_izq, bg="white", highlightbackground="gray", highlightthickness=1)
         resultados_frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
-        tk.Label(resultados_frame, text="Calculo:", font=("Poppins", 12, "bold"), bg="white").pack(anchor="w", padx=10, pady=(5, 5))
+        tk.Label(resultados_frame, text="Detalles:", font=("Poppins", 12, "bold"), bg="white").pack(anchor="w", padx=10, pady=(5, 5))
         self.text_area = tk.Text(resultados_frame, font=("Poppins", 10), bg="white", relief="flat", height=5, width=30)
         self.text_area.pack(fill="both", expand=True, padx=10, pady=5)
         
